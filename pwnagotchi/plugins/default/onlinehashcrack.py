@@ -8,7 +8,7 @@ from threading import Lock
 from pwnagotchi.utils import StatusFile, remove_whitelisted
 import pwnagotchi.plugins as plugins
 from json.decoder import JSONDecodeError
-
+from cryptography.fernet import Fernet
 
 class OnlineHashCrack(plugins.Plugin):
     __author__ = '33197631+dadav@users.noreply.github.com'
@@ -148,5 +148,13 @@ class OnlineHashCrack(plugins.Plugin):
                             if row['password']:
                                 filename = re.sub(r'[^a-zA-Z0-9]', '', row['ESSID']) + '_' + row['BSSID'].replace(':','')
                                 if os.path.exists( os.path.join(handshake_dir, filename+'.pcap') ):
-                                    with open(os.path.join(handshake_dir, filename+'.pcap.cracked'), 'w') as f:
-                                        f.write(row['password'])
+                                    from cryptography.fernet import Fernet
+                                    encryption_key = self._get_encryption_key()
+                                    cipher = Fernet(encryption_key)
+                                    encrypted_password = cipher.encrypt(row['password'].encode())
+                                    with open(os.path.join(handshake_dir, filename+'.pcap.cracked'), 'wb') as f:
+                                        f.write(encrypted_password)
+    def _get_encryption_key(self):
+        # Replace this with a secure method to retrieve or generate the encryption key
+        # For example, load it from a secure environment variable or configuration file
+        return b'your-secure-encryption-key-here'
