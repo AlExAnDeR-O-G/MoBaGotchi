@@ -72,4 +72,4 @@ class LabeledValue(Widget):
         else:
             pos = self.xy
             drawer.text(pos, self.label, font=self.label_font, fill=self.color)
-            drawer.text((pos[0] + self.label_spacing + 5 * len(self.label), pos[1]), self.value, font=self.text_font, fill=self.color)
+            drawer.text((pos[0] + self.label_spacing + self.label_font.getlength(self.label), pos[1]), self.value, font=self.text_font, fill=self.color)
